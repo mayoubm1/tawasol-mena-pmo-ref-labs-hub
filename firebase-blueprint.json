@@ -1,0 +1,172 @@
+{
+  "entities": {
+    "PMOMember": {
+      "title": "PMO Member",
+      "description": "Authorized member of the PMO steering committee.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the officer." },
+        "email": { "type": "string", "description": "Official PMO email address." },
+        "phone": { "type": "string", "description": "Official phone number." },
+        "role": { "type": "string", "description": "Designated portfolio role." },
+        "country": { "type": "string", "enum": ["Egypt", "UAE", "Saudi Arabia", "Global"] },
+        "password": { "type": "string", "description": "Security Access PIN / Key (if managed in DB)." },
+        "status": { "type": "string", "enum": ["online", "offline"] },
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "avatarUrl": { "type": "string" }
+      },
+      "required": ["name", "role", "country"]
+    },
+    "PMOTask": {
+      "title": "PMO Task",
+      "description": "A strategic task or milestone in the laboratory setup process.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "country": { "type": "string", "enum": ["Egypt", "UAE", "Saudi Arabia", "Global"] },
+        "sector": { "type": "string", "enum": ["Procurement", "HR", "Logistics", "Trainings", "Compliance"] },
+        "phase": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["Not Started", "In Progress", "Blocked", "Completed"] },
+        "assignedTo": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date" },
+        "progress": { "type": "number" },
+        "checklist": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "text": { "type": "string" },
+              "completed": { "type": "boolean" }
+            }
+          }
+        },
+        "kpiMetrics": { "type": "array", "items": { "type": "string" } },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "fromStatus": { "type": "string" },
+              "toStatus": { "type": "string" },
+              "user": { "type": "string" },
+              "comment": { "type": "string" }
+            }
+          }
+        },
+        "authorId": { "type": "string", "description": "UID of the user who created/last modified the task." }
+      },
+      "required": ["title", "country", "sector", "phase", "status"]
+    },
+    "KPIMetric": {
+      "title": "KPI Metric",
+      "description": "A key performance indicator metric.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "type": "number" },
+        "target": { "type": "number" },
+        "unit": { "type": "string" },
+        "sector": { "type": "string" },
+        "country": { "type": "string" },
+        "trend": { "type": "string", "enum": ["up", "down", "stable"] }
+      }
+    },
+    "PMOMeeting": {
+      "title": "PMO Meeting",
+      "description": "Record of a steering committee meeting.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "platform": { "type": "string" },
+        "duration": { "type": "string" },
+        "summary": { "type": "string" },
+        "keyOutcomes": { "type": "array", "items": { "type": "string" } },
+        "linkedTaskId": { "type": "string" }
+      }
+    },
+    "PMOActivity": {
+      "title": "PMO Activity",
+      "description": "A record of team activity.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "type": { "type": "string", "enum": ["LOGIN", "TASK_UPDATE", "DOCUMENT_UPLOAD", "MEETING_INITIATED"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "details": { "type": "string" }
+      },
+      "required": ["userId", "userName", "type", "timestamp"]
+    },
+    "WhatsAppMessage": {
+      "title": "WhatsApp Message",
+      "description": "A message sent in the internal WhatsApp steering cockpit.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sender": { "type": "string" },
+        "role": { "type": "string" },
+        "avatar": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "attachment": { "type": "string" }
+      },
+      "required": ["sender", "text", "timestamp"]
+    },
+    "PMOArchiveDocument": {
+      "title": "PMO Archive Document",
+      "description": "A stored document or meeting transcript in the central PMO archive.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "author": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "size": { "type": "string" },
+        "checksum": { "type": "string" },
+        "description": { "type": "string" },
+        "source": { "type": "string" },
+        "linkedTo": { "type": "string" },
+        "fileContent": { "type": "string" }
+      },
+      "required": ["title", "category", "author", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/archive/{docId}": {
+      "schema": "PMOArchiveDocument",
+      "description": "Collection of stored documents and board meeting summaries."
+    },
+    "/activities/{activityId}": {
+      "schema": "PMOActivity",
+      "description": "Collection of team activities like logins and task updates."
+    },
+    "/whatsapp_messages/{messageId}": {
+      "schema": "WhatsAppMessage",
+      "description": "Collection of messages in the WhatsApp Steering Syndicate cockpit."
+    },
+    "/members/{email}": {
+      "schema": "PMOMember",
+      "description": "Collection of PMO steering committee members, keyed by email or phone identifier."
+    },
+    "/tasks/{taskId}": {
+      "schema": "PMOTask",
+      "description": "Collection of strategic PMO tasks."
+    },
+    "/kpis/{kpiId}": {
+      "schema": "KPIMetric",
+      "description": "Collection of global and regional KPI metrics."
+    },
+    "/meetings/{meetingId}": {
+      "schema": "PMOMeeting",
+      "description": "Collection of meeting transcripts and outcomes."
+    }
+  }
+}

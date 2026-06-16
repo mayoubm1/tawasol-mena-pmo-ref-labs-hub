@@ -1,0 +1,6 @@
+{
+  "name": "TAWASOL MENA PMO Hub",
+  "description": "Unified PMO platform for reference lab execution in Saudi Arabia, UAE, Egypt, and Morocco, featuring Tawasol interactive AI copilot, real-time timeline simulation, financial modeling, and collaborative task sync.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
